@@ -1,16 +1,17 @@
-# chat_firebase
+# Chat App - Firebase
 
-A new Flutter project.
+- [My Twitter](https://twitter.com/sangvaleap)
 
-## Getting Started
+- [My Patreon](https://www.patreon.com/sangvaleap)
+- [My Linkedin](https://www.linkedin.com/in/sangvaleap-vanny-353b25aa/)
+- [My Upwork](https://www.upwork.com/freelancers/~01482fe63544bbcb48)
 
-This project is a starting point for a Flutter application.
+- My Email: sangvaleap.vanny@gmail.com
 
-A few resources to get you started if this is your first Flutter project:
+=> To access complete source code, please join [My Patreon](https://www.patreon.com/sangvaleap)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img width="600" alt="Screen Shot 2021-12-23 at 3 22 35 PM" src="https://user-images.githubusercontent.com/86506519/147211487-b2639543-4bbe-4c2e-a4d6-d0970297e2bd.png">
+<img width="600" alt="Screen Shot 2021-12-23 at 3 20 56 PM" src="https://user-images.githubusercontent.com/86506519/147213353-d329fd65-efb8-4a3a-a0a9-2060955e095b.png">
+<img width="600" alt="Screen Shot 2021-12-23 at 3 21 34 PM" src="https://user-images.githubusercontent.com/86506519/147213357-1309c54f-32fc-4309-afa4-95ce82910928.png">
+<img width="600" alt="Screen Shot 2021-12-23 at 3 22 03 PM" src="https://user-images.githubusercontent.com/86506519/147213360-0b521803-b80a-4da3-ade2-7580cbe04ca9.png">
+<img width="600" alt="Screen Shot 2021-12-23 at 3 19 35 PM" src="https://user-images.githubusercontent.com/86506519/147213322-b5877850-6988-4c8a-acdb-f95953567eec.png">
