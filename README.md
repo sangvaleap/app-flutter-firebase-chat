@@ -1,5 +1,6 @@
 # Chat App - Firebase
 
+- Preview video: https://youtu.be/bS5tkTDqFqU
 - [My Twitter](https://twitter.com/sangvaleap)
 
 - [My Patreon](https://www.patreon.com/sangvaleap)
