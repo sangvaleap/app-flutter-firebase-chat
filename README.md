@@ -1,4 +1,4 @@
-# Chat App - Firebase
+# Chat App with Firebase - Flutter
 
 - Preview video: https://youtu.be/bS5tkTDqFqU
 - [My Twitter](https://twitter.com/sangvaleap)
