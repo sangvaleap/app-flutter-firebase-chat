@@ -1,171 +1,238 @@
-import 'package:chat_firebase/pages/home.dart';
 import 'package:chat_firebase/services/auth.dart';
 import 'package:chat_firebase/theme/color.dart';
+import 'package:chat_firebase/utils/app_util.dart';
 import 'package:chat_firebase/widgets/custom_dialog.dart';
 import 'package:chat_firebase/widgets/custom_image.dart';
 import 'package:chat_firebase/widgets/custom_textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({ Key? key }) : super(key: key);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  
-  bool hidedPwd = true;
-  bool hidenConPwd = true;
-  AuthService service = AuthService();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confrimPasswordController = TextEditingController();
-  final RoundedLoadingButtonController btnController = RoundedLoadingButtonController();
-  
+  bool _hidedPwd = true;
+  bool _hidenConfirmPwd = true;
+  late AuthService service;
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confrimPasswordController;
+  late RoundedLoadingButtonController _loginBtnController;
+
+  @override
+  void initState() {
+    service = AuthService(FirebaseAuth.instance);
+    _nameController = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confrimPasswordController = TextEditingController();
+    _loginBtnController = RoundedLoadingButtonController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confrimPasswordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
-        body: getBody(context),
-        floatingActionButton: Visibility(visible: !keyboardIsOpen, child: getNavigationButton()),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
-      );
+      body: _buildBody(),
+      floatingActionButton: Visibility(
+        visible: !keyboardIsOpen,
+        child: _buildLoginButton(),
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterFloat,
+    );
   }
 
-  getBody(context){
-   return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
+  _buildBody() {
+    return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.only(left: 20, right: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         height: MediaQuery.of(context).size.height,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Center(child: 
-              Container(
-                padding: EdgeInsets.all(10),
-                width: 150,
-                height: 150,
-                child: CustomImage("https://cdn-icons-png.flaticon.com/512/3820/3820331.png",
-                  isSVG: false,
-                  bgColor: appBgColor,
-                  radius: 5,
-                ),
-              ),
+            _buildLogo(),
+            const SizedBox(
+              height: 10,
             ),
-            SizedBox(
-                height: 10,
+            const Text(
+              "Register",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
             ),
-            Center(
-              child: Text("Register", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),),
-            ),
-            SizedBox(
+            const SizedBox(
               height: 40,
             ),
-            CustomTextField(
-              controller: nameController,
-              leadingIcon: Icon(Icons.person_outline, color: Colors.grey,),
-              hintText: "Name",
-            ),
-            Divider(
+            _buildName(),
+            const Divider(
               color: Colors.grey,
               height: 10,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            CustomTextField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              leadingIcon: Icon(Icons.email_outlined, color: Colors.grey,),
-              hintText: "Email",
-            ),
-            Divider(
+            _buildEmail(),
+            const Divider(
               color: Colors.grey,
               height: 10,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            CustomTextField(
-              controller: passwordController,
-              leadingIcon: Icon(Icons.lock_outline, color: Colors.grey,),
-              suffixIcon: GestureDetector(
-                onTap: (){
-                  setState(() {
-                    hidedPwd = !hidedPwd;
-                  });
-                },
-                child: Icon(hidedPwd ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: Colors.grey),
-              ),
-              obscureText: hidedPwd,
-              hintText: "Password",
-            ),
-            Divider(
+            _buildPassword(),
+            const Divider(
               color: Colors.grey,
               height: 10,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            CustomTextField(
-              controller: confrimPasswordController,
-              leadingIcon: Icon(Icons.lock_outline, color: Colors.grey,),
-              suffixIcon: GestureDetector(
-                onTap: (){
-                  setState(() {
-                    hidenConPwd = !hidenConPwd;
-                  });
-                },
-                child: Icon(hidenConPwd ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: Colors.grey),
-              ),
-              obscureText: hidenConPwd,
-              hintText: "Confirm Password",
-            ),
-            Divider(
+            _buildConfirmPassword(),
+            const Divider(
               color: Colors.grey,
               height: 10,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: RoundedLoadingButton(
-                      width: MediaQuery.of(context).size.width,
-                      color: primary,
-                      child: Text("Register", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      controller: btnController,
-                      onPressed: () async {
-                        FocusScope.of(context).unfocus();
-                        registerProceed();
-                      },
-                    ),
-                  ),
-                ],
-              )
-            ),
+            _buildRegister(),
           ],
         ),
       ),
     );
   }
 
-  Widget getNavigationButton() {
+  Widget _buildName() {
+    return CustomTextField(
+      controller: _nameController,
+      leadingIcon: Icon(
+        Icons.person_outline,
+        color: Colors.grey,
+      ),
+      hintText: "Name",
+    );
+  }
+
+  Widget _buildEmail() {
+    return CustomTextField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      leadingIcon: Icon(
+        Icons.email_outlined,
+        color: Colors.grey,
+      ),
+      hintText: "Email",
+    );
+  }
+
+  Widget _buildPassword() {
+    return CustomTextField(
+      controller: _passwordController,
+      leadingIcon: Icon(
+        Icons.lock_outline,
+        color: Colors.grey,
+      ),
+      suffixIcon: GestureDetector(
+        onTap: () {
+          setState(() {
+            _hidedPwd = !_hidedPwd;
+          });
+        },
+        child: Icon(
+          _hidedPwd ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+          color: Colors.grey,
+        ),
+      ),
+      obscureText: _hidedPwd,
+      hintText: "Password",
+    );
+  }
+
+  Widget _buildConfirmPassword() {
+    return CustomTextField(
+      controller: _confrimPasswordController,
+      leadingIcon: Icon(
+        Icons.lock_outline,
+        color: Colors.grey,
+      ),
+      suffixIcon: GestureDetector(
+        onTap: () {
+          setState(() {
+            _hidenConfirmPwd = !_hidenConfirmPwd;
+          });
+        },
+        child: Icon(
+          _hidenConfirmPwd
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
+          color: Colors.grey,
+        ),
+      ),
+      obscureText: _hidenConfirmPwd,
+      hintText: "Confirm Password",
+    );
+  }
+
+  Widget _buildRegister() {
+    return Row(
+      children: [
+        RoundedLoadingButton(
+          width: MediaQuery.of(context).size.width,
+          color: AppColor.primary,
+          child: const Text(
+            "Register",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          controller: _loginBtnController,
+          onPressed: () async {
+            FocusScope.of(context).unfocus();
+            _onRegister();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLogo() {
+    return Container(
+      padding: EdgeInsets.all(10),
+      width: 150,
+      height: 150,
+      child: CustomImage(
+        "https://cdn-icons-png.flaticon.com/512/3820/3820331.png",
+        isSVG: false,
+        bgColor: AppColor.appBgColor,
+        radius: 5,
+      ),
+    );
+  }
+
+  Widget _buildLoginButton() {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.of(context).pop();
             },
             child: Container(
@@ -173,8 +240,11 @@ class _RegisterPageState extends State<RegisterPage> {
               height: 40,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color:  Theme.of(context).cardColor,
-                borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20)),
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Theme.of(context).shadowColor.withOpacity(0.1),
@@ -184,47 +254,59 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ],
               ),
-              child: Text("Login", style: TextStyle(color: primary),)
+              child: Text(
+                "Login",
+                style: TextStyle(color: AppColor.primary),
+              ),
             ),
           )
         ],
-      )
+      ),
     );
   }
 
-  registerProceed() async{
-    if(passwordController.text != confrimPasswordController.text){
-      btnController.reset();
-      showDialog(context: context,
-          builder: (BuildContext context){
-          return 
-            CustomDialogBox(
-              descriptions: "Password and Confirm Password are not matched.",
-            );
-          }
-        );
+  Future _onRegister() async {
+    if (!validatePassword(
+        _passwordController.text, _confrimPasswordController.text)) {
       return;
     }
 
-    var res = await service.registerWithEmailPassword(nameController.text, emailController.text, passwordController.text);
-    if(res["status"] == false){
-      btnController.reset();
-      print("Failed");
-      showDialog(context: context,
-          builder: (BuildContext context){
-          return 
-            CustomDialogBox(
-              title: "Register",
-              descriptions: res["message"],
-            );
-          }
-        );
-    }else{
-      btnController.success();
-      print("Success");
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => HomePage())
-          ,(route) => false);
+    var res = await service.registerWithEmailPassword(
+      _nameController.text,
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (res.status) {
+      _loginBtnController.success();
+      AppUtil.debugPrint("Success");
+    } else {
+      _loginBtnController.reset();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomDialogBox(
+            title: "Register",
+            descriptions: res.message,
+          );
+        },
+      );
     }
+  }
+
+  bool validatePassword(String pwd, String confPwd) {
+    if (pwd != confPwd) {
+      _loginBtnController.reset();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomDialogBox(
+            descriptions: "Password and Confirm Password are not matched.",
+          );
+        },
+      );
+      return false;
+    }
+    return true;
   }
 }

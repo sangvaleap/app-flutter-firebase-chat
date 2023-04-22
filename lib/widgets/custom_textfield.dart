@@ -1,7 +1,22 @@
-
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
+  const CustomTextField({
+    Key? key,
+    this.onTap,
+    this.onChanged,
+    this.keyboardType,
+    this.controller,
+    this.hintText,
+    this.labelText,
+    this.readOnly = false,
+    this.validatedField = true,
+    this.errorText = 'Cannot be empty',
+    this.leadingIcon,
+    this.suffixIcon,
+    this.obscureText = false,
+  }) : super(key: key);
+
   final bool validatedField;
   final bool readOnly;
   final bool obscureText;
@@ -14,31 +29,26 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final GestureTapCallback? onTap;
   final ValueChanged<String>? onChanged;
-  const CustomTextField({ Key? key, this.onTap, this.onChanged, this.keyboardType, this.controller, this.hintText, this.labelText, this.readOnly = false, this.validatedField = true, this.errorText = 'Cannot be empty', this.leadingIcon, this.suffixIcon, this.obscureText = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return 
-      TextField(
-        onTap: onTap,
-        onChanged: onChanged,
-        controller: controller,
-        keyboardType: keyboardType,
-        cursorColor: Theme.of(context).accentColor,
-        readOnly: readOnly,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          prefixIcon: leadingIcon !=null ? leadingIcon : null,
-          suffixIcon: suffixIcon !=null ? suffixIcon : null,
-          border: InputBorder.none,
-          hintText: hintText,
-          hintStyle: TextStyle(
-              color: Colors.grey, 
-              fontSize: 15
-          ),
-          labelText: labelText,
-          errorText: validatedField ? null : errorText,
-        ),
-      );
+    return TextField(
+      onTap: onTap,
+      onChanged: onChanged,
+      controller: controller,
+      keyboardType: keyboardType,
+      cursorColor: Theme.of(context).colorScheme.secondary,
+      readOnly: readOnly,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        prefixIcon: leadingIcon != null ? leadingIcon : null,
+        suffixIcon: suffixIcon != null ? suffixIcon : null,
+        border: InputBorder.none,
+        hintText: hintText,
+        hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
+        labelText: labelText,
+        errorText: validatedField ? null : errorText,
+      ),
+    );
   }
 }

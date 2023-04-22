@@ -6,148 +6,168 @@ import 'package:chat_firebase/widgets/chat_room_item.dart';
 import 'package:chat_firebase/widgets/custom_dialog.dart';
 import 'package:chat_firebase/widgets/custom_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'login.dart';
-
 class HomePage extends StatefulWidget {
-  const HomePage({ Key? key }) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  TextEditingController messageController = TextEditingController();
-  bool isLoading = false;
-  MessageService service = MessageService();
+  late TextEditingController _messageController;
+  late MessageService service;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    service = MessageService(FirebaseAuth.instance);
+    _messageController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: appBgColor,
-      appBar: AppBar(
-        title: 
-          Column(
-            children: [
-              Text("Chat Room"),
-            ],
-          ),
-        actions: [
-          Container(
-            child: IconButton(
-              onPressed: (){
-                showConfirmLogout();
-              }, 
-              icon: Icon(Icons.logout_rounded)
-            )
-          ),
-        ],
+      backgroundColor: AppColor.appBgColor,
+      appBar: _buildAppBar(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 15),
+        child: _buildChats(),
       ),
-      body:  SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15),
-          child: getChats()
-        ),
-      ),
-      floatingActionButton: getBottom(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButton: _buildFooter(),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
     );
   }
 
-  getChats(){
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: Text("Chat Room"),
+      actions: [
+        IconButton(
+          onPressed: () {
+            _showConfirmLogout();
+          },
+          icon: Icon(Icons.logout_rounded),
+        ),
+      ],
+    );
+  }
+
+  _buildChats() {
     return StreamBuilder<QuerySnapshot>(
-      stream: service.getMessageStream(10),
-      builder: (context, snapshot){
-        if(!snapshot.hasData) {
+      stream: service.loadStreamMessage(10),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
           return Container();
         }
         var data = snapshot.data!.docs;
-        print(data.length);
-       return ListView.builder(itemBuilder: (context, index) {
-         var msg = Message.fromJson(data[index].data() as Map<String, dynamic>);
-         return ChatRoomItem(message: msg);
-       }, shrinkWrap: true, itemCount: data.length);
-    });
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            var msg =
+                Message.fromJson(data[index].data() as Map<String, dynamic>);
+            return ChatRoomItem(message: msg);
+          },
+          shrinkWrap: true,
+          itemCount: data.length,
+        );
+      },
+    );
   }
 
-  getBottom(){
-    return 
-      Container(
-        padding: EdgeInsets.only(left: 15, right: 5),
-        margin: EdgeInsets.only(left: 10, right: 10),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(20)
-        ),
-        child: Row(children: [
+  _buildFooter() {
+    return Container(
+      padding: EdgeInsets.only(left: 15, right: 5),
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
           Expanded(
-            child: Container(
-              child: CustomTextField(
-                controller: messageController,
-                hintText: "Write your message",
-              )
+            child: CustomTextField(
+              controller: _messageController,
+              hintText: "Write your message",
             ),
           ),
           IconButton(
             onPressed: () {
-              sendMessage();
+              _sendMessage();
             },
-            icon: Icon(Icons.send_rounded, color: isLoading ? Colors.grey : primary, size: 35,)
+            icon: Icon(
+              Icons.send_rounded,
+              color: _isLoading ? Colors.grey : AppColor.primary,
+              size: 35,
+            ),
           )
-        ],),
-      );
+        ],
+      ),
+    );
   }
 
-  sendMessage() async{
-    if(isLoading) return;
-    setState(() {
-      isLoading = true;
-    });
-
-    var res = await service.sendMessage(messageController.text);
+  _sendMessage() async {
+    if (_isLoading) return;
 
     setState(() {
-      isLoading = false;
+      _isLoading = true;
     });
-    if(res["status"] == true){
-      messageController.clear();
-    }else{
+
+    var res = await service.sendMessage(_messageController.text);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (res.status) {
+      _messageController.clear();
+    } else {
       showDialog(
         context: context,
-        builder: (BuildContext context){
-        return CustomDialogBox(title: "Chat", descriptions: res["message"],);
-        }
+        builder: (BuildContext context) {
+          return CustomDialogBox(
+            title: "Chat",
+            descriptions: res.message,
+          );
+        },
       );
     }
   }
 
-  showConfirmLogout(){
+  _showConfirmLogout() {
     showCupertinoModalPopup(
-      context: context, 
-      builder: (context) =>
-        CupertinoActionSheet(
-          message: Text("Would you like to log out?"),
-          actions: [
-            CupertinoActionSheetAction(
-              onPressed: (){
-                AuthService auth = AuthService();
-                auth.logOut();
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), 
-                (route) => false);
-              },
-              child: Text("Log Out", style: TextStyle(color: secondary),),
-            )
-          ],
-          cancelButton: 
-            CupertinoActionSheetAction(child:
-              Text("Cancel"),
-              onPressed: (){
-               Navigator.of(context).pop();
-              },
-            )
-        )
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        message: Text("Would you like to log out?"),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () async {
+              AuthService auth = AuthService(FirebaseAuth.instance);
+              await auth.logOut();
+            },
+            child: const Text(
+              "Log out",
+              style: TextStyle(color: AppColor.secondary),
+            ),
+          )
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: const Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
     );
   }
 }

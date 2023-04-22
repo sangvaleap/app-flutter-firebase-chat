@@ -1,18 +1,20 @@
-
 import 'package:chat_firebase/model/message.dart';
+import 'package:chat_firebase/model/service_response.dart';
+import 'package:chat_firebase/utils/app_util.dart';
 import 'package:chat_firebase/utils/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MessageService {
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final db = FirebaseFirestore.instance;  
-  late CollectionReference refMessage;
+  MessageService(this.firebaseAuth);
 
-  Future sendMessage(String message) async {
+  final FirebaseAuth firebaseAuth;
+  final _database = FirebaseFirestore.instance;
+
+  Future<ServiceResponse> sendMessage(String message) async {
     final newMessage = Message(
-      userId: _firebaseAuth.currentUser!.uid,
-      userName: _firebaseAuth.currentUser!.displayName ?? "N/A",
+      userId: firebaseAuth.currentUser!.uid,
+      userName: firebaseAuth.currentUser!.displayName ?? "N/A",
       roomId: ROOM_ID,
       message: message.trim(),
       messageType: MessageType.text,
@@ -20,21 +22,24 @@ class MessageService {
     );
 
     try {
-      refMessage = db.collection(ROOM_COLLECTION);
+      var refMessage = _database.collection(ROOM_COLLECTION);
       var res = await refMessage.add(newMessage.toJson());
-      print(res);
-      return {"status" : true, "message" : "success"};
+      AppUtil.debugPrint(res);
+      return ServiceResponse.fromJson(
+        {"status": true, "message": "success"},
+      );
     } on FirebaseAuthException catch (e) {
-      return {"status" : false, "message" : e.message.toString()};
+      AppUtil.debugPrint(e.message);
+      return ServiceResponse.fromJson(
+        {"status": false, "message": e.message.toString()},
+      );
     }
   }
 
-  Stream<QuerySnapshot> getMessageStream(int limit) {
-    return db.collection(ROOM_COLLECTION)
-        // .where('message', isEqualTo: "Hi")
+  Stream<QuerySnapshot> loadStreamMessage(int limit) {
+    return _database
+        .collection(ROOM_COLLECTION)
         .orderBy('createdAt')
-        // .limit(limit)
         .snapshots();
   }
-
 }

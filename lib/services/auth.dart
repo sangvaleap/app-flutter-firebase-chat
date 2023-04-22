@@ -1,34 +1,48 @@
+import 'package:chat_firebase/model/service_response.dart';
+import 'package:chat_firebase/utils/app_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  
-  Future signInWithEmailPassword(String email, String password) async {
+  const AuthService(this.firebaseAuth);
+  final FirebaseAuth firebaseAuth;
+
+  Future<ServiceResponse> signInWithEmailPassword(
+      String email, String password) async {
     try {
-      var result =  await _firebaseAuth.signInWithEmailAndPassword(email: email.trim(), password: password.trim());
-      print(result.user);
-      return {"status" : true, "message" : "success", "data" : result.user} ;
-      
+      var result = await firebaseAuth.signInWithEmailAndPassword(
+          email: email.trim(), password: password.trim());
+      AppUtil.debugPrint(result.user);
+      return ServiceResponse.fromJson(
+        {"status": true, "message": "success", "data": result.user},
+      );
     } on FirebaseAuthException catch (e) {
-      print(e.toString());
-      return {"status" : false, "message" : e.message.toString(), "data" : ""};
+      AppUtil.debugPrint(e.toString());
+      return ServiceResponse.fromJson(
+        {"status": false, "message": e.message.toString(), "data": ""},
+      );
     }
   }
 
-  Future registerWithEmailPassword(String name, String email, String password) async {
+  Future<ServiceResponse> registerWithEmailPassword(
+      String name, String email, String password) async {
     try {
-      var res = await _firebaseAuth.createUserWithEmailAndPassword(email: email.trim(), password: password.trim());
-       print(res);
+      var res = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email.trim(), password: password.trim());
+      AppUtil.debugPrint(res);
       res.user?.updateDisplayName(name);
-      return {"status" : true, "message" : "success", "data" : res.user};
+      await firebaseAuth.currentUser?.reload();
+      return ServiceResponse.fromJson(
+        {"status": true, "message": "success", "data": res.user},
+      );
     } on FirebaseAuthException catch (e) {
-      print(e.toString());
-      return {"status" : false, "message" : e.message.toString(), "data" : ""};
+      AppUtil.debugPrint(e.toString());
+      return ServiceResponse.fromJson(
+        {"status": false, "message": e.message.toString(), "data": ""},
+      );
     }
   }
 
-  Future<void> logOut() async {
-    await _firebaseAuth.signOut();
+  Future logOut() async {
+    await firebaseAuth.signOut();
   }
-
 }
