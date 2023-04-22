@@ -40,8 +40,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: AppColor.appBgColor,
       appBar: _buildAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(top: 15),
+      body: Padding(
+        padding: EdgeInsets.only(bottom: 60),
         child: _buildChats(),
       ),
       floatingActionButton: _buildFooter(),
@@ -152,6 +152,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           CupertinoActionSheetAction(
             onPressed: () async {
+              Navigator.of(context).pop();
               AuthService auth = AuthService(FirebaseAuth.instance);
               await auth.logOut();
             },

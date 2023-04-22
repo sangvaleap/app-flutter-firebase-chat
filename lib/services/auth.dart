@@ -18,7 +18,11 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       AppUtil.debugPrint(e.toString());
       return ServiceResponse.fromJson(
-        {"status": false, "message": e.message.toString(), "data": ""},
+        {"status": false, "message": e.message.toString()},
+      );
+    } on Exception catch (e) {
+      return ServiceResponse.fromJson(
+        {"status": false, "message": e.toString()},
       );
     }
   }
@@ -37,7 +41,11 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       AppUtil.debugPrint(e.toString());
       return ServiceResponse.fromJson(
-        {"status": false, "message": e.message.toString(), "data": ""},
+        {"status": false, "message": e.message.toString()},
+      );
+    } on Exception catch (e) {
+      return ServiceResponse.fromJson(
+        {"status": false, "message": e.toString()},
       );
     }
   }

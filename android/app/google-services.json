@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "192825699924",
+    "project_id": "fir-chat-a5ad2",
+    "storage_bucket": "fir-chat-a5ad2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:192825699924:android:c1cd30f1ba7bf2fed887c1",
+        "android_client_info": {
+          "package_name": "com.sangvaleap.firebasechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "192825699924-bb55h67r7be26np6c60ckah0q8u32jrf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjI5znQwx11fomt7QxesF5No3ybHp_mBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "192825699924-bb55h67r7be26np6c60ckah0q8u32jrf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "192825699924-20rrplggmiehp9i5d79it4o68drj6ei9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sangvaleap.firebasechat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

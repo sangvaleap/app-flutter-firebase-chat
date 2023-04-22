@@ -23,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _confrimPasswordController;
-  late RoundedLoadingButtonController _loginBtnController;
+  late RoundedLoadingButtonController _registerBtnController;
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confrimPasswordController = TextEditingController();
-    _loginBtnController = RoundedLoadingButtonController();
+    _registerBtnController = RoundedLoadingButtonController();
     super.initState();
   }
 
@@ -192,21 +192,20 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildRegister() {
     return Row(
       children: [
-        RoundedLoadingButton(
-          width: MediaQuery.of(context).size.width,
-          color: AppColor.primary,
-          child: const Text(
-            "Register",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+        Expanded(
+          child: RoundedLoadingButton(
+            width: MediaQuery.of(context).size.width,
+            color: AppColor.primary,
+            controller: _registerBtnController,
+            onPressed: _onRegister,
+            child: const Text(
+              "Register",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          controller: _loginBtnController,
-          onPressed: () async {
-            FocusScope.of(context).unfocus();
-            _onRegister();
-          },
         ),
       ],
     );
@@ -266,8 +265,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future _onRegister() async {
+    FocusScope.of(context).unfocus();
     if (!validatePassword(
-        _passwordController.text, _confrimPasswordController.text)) {
+            _passwordController.text, _confrimPasswordController.text) ||
+        !_validateForm(_nameController.text, _emailController.text,
+            _passwordController.text, _confrimPasswordController.text)) {
       return;
     }
 
@@ -278,10 +280,11 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     if (res.status) {
-      _loginBtnController.success();
+      _registerBtnController.success();
       AppUtil.debugPrint("Success");
+      Navigator.of(context).pop();
     } else {
-      _loginBtnController.reset();
+      _registerBtnController.reset();
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -296,12 +299,28 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool validatePassword(String pwd, String confPwd) {
     if (pwd != confPwd) {
-      _loginBtnController.reset();
+      _registerBtnController.reset();
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return CustomDialogBox(
             descriptions: "Password and Confirm Password are not matched.",
+          );
+        },
+      );
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateForm(String name, String email, String pwd, String confirmPwd) {
+    if (name.isEmpty || email.isEmpty || pwd.isEmpty || confirmPwd.isEmpty) {
+      _registerBtnController.reset();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomDialogBox(
+            descriptions: "Please enter all required information.",
           );
         },
       );

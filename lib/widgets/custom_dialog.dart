@@ -1,25 +1,20 @@
 import 'package:chat_firebase/theme/color.dart';
 import 'package:flutter/material.dart';
 
-class CustomDialogBox extends StatefulWidget {
-  final String title;
-  final String descriptions;
-  final String text;
-  final String? img;
-
+class CustomDialogBox extends StatelessWidget {
   const CustomDialogBox({
     Key? key,
     this.title = "Message",
     this.descriptions = "",
-    this.text = "Ok",
-    this.img,
+    this.buttonText = "Ok",
+    this.logo = "https://cdn-icons-png.flaticon.com/512/3820/3820331.png",
   }) : super(key: key);
 
-  @override
-  _CustomDialogBoxState createState() => _CustomDialogBoxState();
-}
+  final String title;
+  final String descriptions;
+  final String buttonText;
+  final String logo;
 
-class _CustomDialogBoxState extends State<CustomDialogBox> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -59,14 +54,14 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                widget.title,
+                title,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               const SizedBox(
                 height: 15,
               ),
               Text(
-                widget.descriptions,
+                descriptions,
                 style: TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),
@@ -80,7 +75,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                     Navigator.of(context).pop();
                   },
                   child: Text(
-                    widget.text,
+                    buttonText,
                     style: TextStyle(
                       fontSize: 18,
                       color: AppColor.primary,
@@ -101,7 +96,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
               borderRadius: BorderRadius.all(Radius.circular(5)),
               child: Image(
                 image: NetworkImage(
-                  "https://cdn-icons-png.flaticon.com/512/3820/3820331.png",
+                  logo,
                 ),
               ),
             ),

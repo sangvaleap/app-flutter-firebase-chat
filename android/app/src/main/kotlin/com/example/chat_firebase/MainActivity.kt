@@ -1,4 +1,4 @@
-package com.example.chat_firebase
+package com.sangvaleap.firebasechat
 
 import io.flutter.embedding.android.FlutterActivity
 

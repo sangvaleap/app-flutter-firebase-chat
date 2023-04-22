@@ -30,6 +30,7 @@ class ChatRoomItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
+          constraints: const BoxConstraints(maxWidth: 280),
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.blue.shade50,
@@ -55,7 +56,11 @@ class ChatRoomItem extends StatelessWidget {
                   children: <TextSpan>[
                     TextSpan(
                       text: this.message.message,
-                      style: TextStyle(fontSize: 15, color: Colors.black),
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        height: 1.5,
+                      ),
                     ),
                     TextSpan(text: "   "),
                     TextSpan(
@@ -85,6 +90,7 @@ class ChatRoomItem extends StatelessWidget {
           width: 5,
         ),
         Container(
+          constraints: const BoxConstraints(maxWidth: 280),
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.lightGreen.shade50,
@@ -117,7 +123,11 @@ class ChatRoomItem extends StatelessWidget {
                   children: <TextSpan>[
                     TextSpan(
                       text: this.message.message,
-                      style: TextStyle(fontSize: 14, color: Colors.black),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        height: 1.5,
+                      ),
                     ),
                     TextSpan(text: "   "),
                     TextSpan(

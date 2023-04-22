@@ -9,4 +9,8 @@ class AppUtil {
   static getTimeAgo(DateTime dt) {
     return timeago.format(dt, allowFromNow: true, locale: 'en_short');
   }
+
+  static bool checkIsNull(value) {
+    return [null, "null", ""].contains(value);
+  }
 }

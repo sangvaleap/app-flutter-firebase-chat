@@ -6,7 +6,6 @@ import 'package:chat_firebase/widgets/custom_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-
 import 'register.dart';
 
 class LoginPage extends StatefulWidget {
@@ -134,16 +133,18 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildLogin() {
     return Row(
       children: [
-        RoundedLoadingButton(
-          width: MediaQuery.of(context).size.width,
-          color: AppColor.primary,
-          controller: _loginBtnController,
-          onPressed: onLogin,
-          child: const Text(
-            "Login",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+        Expanded(
+          child: RoundedLoadingButton(
+            width: MediaQuery.of(context).size.width,
+            color: AppColor.primary,
+            controller: _loginBtnController,
+            onPressed: onLogin,
+            child: const Text(
+              "Login",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -153,6 +154,10 @@ class _LoginPageState extends State<LoginPage> {
 
   Future onLogin() async {
     FocusScope.of(context).unfocus();
+    if (!_validateForm(_emailController.text, _passwordController.text)) {
+      return;
+    }
+
     var res = await service.signInWithEmailPassword(
       _emailController.text,
       _passwordController.text,
@@ -171,6 +176,22 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
     }
+  }
+
+  bool _validateForm(String email, String pwd) {
+    if (email.isEmpty || pwd.isEmpty) {
+      _loginBtnController.reset();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomDialogBox(
+            descriptions: "Please enter your email and password.",
+          );
+        },
+      );
+      return false;
+    }
+    return true;
   }
 
   Widget _buildPassword() {
